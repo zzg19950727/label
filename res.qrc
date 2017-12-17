@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>unlock.ico</file>
+        <file>close.ico</file>
+        <file>lock.ico</file>
+    </qresource>
+</RCC>
