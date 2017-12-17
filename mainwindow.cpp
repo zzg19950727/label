@@ -70,6 +70,20 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
     }
 }
 
+void MainWindow::wheelEvent(QWheelEvent * event)
+{
+    if(ui->stackedWidget->currentIndex()==0)
+        return;
+    if(event->delta() > 0)
+    {
+        textZoomIn();//放大
+    }
+    else
+    {
+        textZoomOut();//缩小
+    }
+}
+
 void MainWindow::contextMenuEvent(QContextMenuEvent *event)
 {
     return;
@@ -90,43 +104,40 @@ void MainWindow::init_UI()
 {
     this->setWindowFlags(Qt::FramelessWindowHint|Qt::Tool);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
-    ui->fontComboBox->setHidden(true);
-    this->resize(240,240);
-    ui->stackedWidget->setMaximumHeight(70);
 
-    ui->spinBox_size->setValue(32);
+    this->resize(240,240);
+    ui->stackedWidget->setMaximumHeight(30);
+
+    fontSize = 32;
     ui->textEdit->setFontPointSize(32);
 
     ui->pushButton_unlock->setIcon(QIcon(":unlock.ico"));
-    ui->pushButton_unlock->setIconSize(QSize(30,30));
+    ui->pushButton_unlock->setIconSize(QSize(20,20));
     ui->pushButton_unlock->setMaximumWidth(30);
     ui->pushButton_unlock->setFlat(true);
 
     ui->pushButton_lock->setIcon(QIcon(":lock.ico"));
-    ui->pushButton_lock->setIconSize(QSize(30,30));
+    ui->pushButton_lock->setIconSize(QSize(20,20));
     ui->pushButton_lock->setMaximumWidth(30);
     ui->pushButton_lock->setFlat(true);
 
     ui->pushButton_close->setIcon(QIcon(":close.ico"));
-    ui->pushButton_close->setIconSize(QSize(30,30));
+    ui->pushButton_close->setIconSize(QSize(20,20));
     ui->pushButton_close->setMaximumWidth(30);
     ui->pushButton_close->setFlat(true);
 
-    ui->textEdit->setStyleSheet("background-color:lightblue;");
-    ui->stackedWidget->setStyleSheet("background-color:rgb(255,255,127);");
-    ui->checkBox_background->setStyleSheet("color:gray;");
-    ui->label->setStyleSheet("color:gray;");
-    ui->fontComboBox->setStyleSheet("color:gray;");
+    ui->textEdit->setStyleSheet("background-color:rgb(60,60,60);");
+    ui->stackedWidget->setStyleSheet("background-color:rgb(30,30,30);");
+    ui->checkBox_background->setStyleSheet("color:lightgray;");
+    ui->fontComboBox->setStyleSheet("color:lightgray;");
     ui->pushButton_close->setStyleSheet("QPushButton{border:0px;}");
     ui->pushButton_lock->setStyleSheet("QPushButton{border:0px;}");
     ui->pushButton_unlock->setStyleSheet("QPushButton{border:0px;}");
     ui->pushButton_color->setStyleSheet("QPushButton{border:0px;"
-                                        "color:gray;"
+                                        "color:lightgray;"
                                         "background-color:black;"
                                         "height:20;width:20;}");
 
-    QPalette pal;
-    pal.setColor(QPalette::Background, Qt::black);
     ui->textEdit->setTextColor(Qt::black);
     ui->pushButton_color->setMaximumWidth(20);
 }
@@ -145,9 +156,6 @@ void MainWindow::connect_signals()
     connect(ui->fontComboBox, SIGNAL(currentFontChanged(QFont)),
             this, SLOT(fontChanged()) );
 
-    connect(ui->spinBox_size, SIGNAL(valueChanged(int)),
-            this, SLOT(sizeChanged()) );
-
     connect(ui->pushButton_color, SIGNAL(clicked(bool)),
             this, SLOT(selectColor()) );
 
@@ -161,7 +169,7 @@ void MainWindow::connect_signals()
 void MainWindow::save()
 {
     QString text = ui->textEdit->toPlainText();
-    int fondSize = ui->spinBox_size->value();
+    int fondSize = fontSize;
     bool checked = ui->checkBox_background->isChecked();
     int w = this->width();
     int h = this->height();
@@ -214,7 +222,7 @@ void MainWindow::read_history()
 
     c = QColor(r,g,b);
     ui->textEdit->setTextColor(c);
-    ui->spinBox_size->setValue(fondSize);
+    fontSize = fondSize;
     sizeChanged();
 
     this->resize(w,h);
@@ -283,8 +291,8 @@ void MainWindow::setUnlock()
     ui->stackedWidget->setCurrentIndex(1);
     ui->textEdit->setReadOnly(false);
     ui->textEdit->setDisabled(false);
-    ui->textEdit->setStyleSheet("background-color:lightblue;");
-    ui->stackedWidget->setStyleSheet("background-color:rgb(255,255,127);");
+    ui->textEdit->setStyleSheet("background-color:rgb(60,60,60);");
+    ui->stackedWidget->setStyleSheet("background-color:rgb(30,30,30);");
 }
 
 void MainWindow::fontChanged()
@@ -296,9 +304,25 @@ void MainWindow::fontChanged()
 
 void MainWindow::sizeChanged()
 {
-    int size = ui->spinBox_size->value();
+    int size = fontSize;
 
     ui->textEdit->setFontPointSize(size);
+}
+
+void MainWindow::textZoomIn()
+{
+    fontSize += 1;
+
+    ui->textEdit->setFontPointSize(fontSize);
+}
+
+void MainWindow::textZoomOut()
+{
+    fontSize -= 1;
+    if(fontSize <=1 )
+        fontSize = 1;
+
+    ui->textEdit->setFontPointSize(fontSize);
 }
 
 void MainWindow::selectColor()

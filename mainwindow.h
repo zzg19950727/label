@@ -26,6 +26,8 @@ public:
 
     void mouseMoveEvent(QMouseEvent *event);
 
+    void wheelEvent(QWheelEvent * event);
+
     void contextMenuEvent(QContextMenuEvent*);
 
     void init_UI();
@@ -45,6 +47,10 @@ private slots:
 
     void sizeChanged();
 
+    void textZoomIn();
+
+    void textZoomOut();
+
     void selectColor();
 
     void colorDone();
@@ -63,6 +69,8 @@ private:
     QTimer timer;
 
     QColor c;
+
+    int fontSize;
 };
 
 #endif // MAINWINDOW_H
