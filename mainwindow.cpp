@@ -140,6 +140,10 @@ void MainWindow::init_UI()
 
     ui->textEdit->setTextColor(Qt::black);
     ui->pushButton_color->setMaximumWidth(20);
+
+    QPalette editpalete = ui->textEdit->palette();
+    editpalete.setColor(QPalette::Text,QColor("lightgray"));
+    ui->textEdit->setPalette(editpalete);
 }
 
 void MainWindow::connect_signals()
@@ -170,6 +174,7 @@ void MainWindow::save()
 {
     QString text = ui->textEdit->toPlainText();
     int fondSize = fontSize;
+    int font = ui->fontComboBox->currentIndex();
     bool checked = ui->checkBox_background->isChecked();
     int w = this->width();
     int h = this->height();
@@ -181,6 +186,7 @@ void MainWindow::save()
 
     QTextStream out(&file);
     out<<fondSize<<"\n";
+    out<<font<<"\n";
     out<<c.red()<<"\n";
     out<<c.green()<<"\n";
     out<<c.blue()<<"\n";
@@ -198,6 +204,7 @@ void MainWindow::read_history()
 {
     QString text;
     int fondSize;
+    int font;
     int checked;
     int r,g,b,w,h,x,y;
 
@@ -206,7 +213,7 @@ void MainWindow::read_history()
         return;
 
     QTextStream in(&file);
-    in>>fondSize>>r>>g>>b>>checked;
+    in>>fondSize>>font>>r>>g>>b>>checked;
     in>>w>>h>>x>>y;
 
     while(!in.atEnd())
@@ -224,6 +231,8 @@ void MainWindow::read_history()
     ui->textEdit->setTextColor(c);
     fontSize = fondSize;
     sizeChanged();
+    ui->fontComboBox->setCurrentIndex(font);
+    fontChanged();
 
     this->resize(w,h);
     this->move(x,y);
@@ -257,7 +266,7 @@ void MainWindow::setLock()
     ui->stackedWidget->setCurrentIndex(0);
     ui->textEdit->setReadOnly(true);
     ui->textEdit->setDisabled(true);
-
+    ui->statusBar->setHidden(true);
 
     if(!ui->checkBox_background->isChecked())
     {
@@ -283,7 +292,7 @@ void MainWindow::setLock()
                      this->height(),
                      SWP_SHOWWINDOW);
     }
-
+    save();
 }
 
 void MainWindow::setUnlock()
@@ -291,6 +300,7 @@ void MainWindow::setUnlock()
     ui->stackedWidget->setCurrentIndex(1);
     ui->textEdit->setReadOnly(false);
     ui->textEdit->setDisabled(false);
+    ui->statusBar->setHidden(false);
     ui->textEdit->setStyleSheet("background-color:rgb(60,60,60);");
     ui->stackedWidget->setStyleSheet("background-color:rgb(30,30,30);");
 }

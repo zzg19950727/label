@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>281</width>
+    <width>283</width>
     <height>226</height>
    </rect>
   </property>
@@ -119,7 +119,7 @@
              <widget class="QFontComboBox" name="fontComboBox">
               <property name="maximumSize">
                <size>
-                <width>100</width>
+                <width>80</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -188,6 +188,7 @@
     </item>
    </layout>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
