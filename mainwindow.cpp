@@ -5,6 +5,7 @@
 #include <QAction>
 #include <QIODevice>
 #include <QTextStream>
+#include <QScrollBar>
 #include <QMenu>
 #include <QFont>
 #include <QFile>
@@ -172,7 +173,7 @@ void MainWindow::connect_signals()
 
 void MainWindow::save()
 {
-    QString text = ui->textEdit->toPlainText();
+    QString text = ui->textEdit->document()->toHtml();
     int fondSize = fontSize;
     int font = ui->fontComboBox->currentIndex();
     bool checked = ui->checkBox_background->isChecked();
@@ -196,7 +197,6 @@ void MainWindow::save()
     out<<x<<"\n";
     out<<y<<"\n";
     out<<text;
-
     file.close();
 }
 
@@ -220,19 +220,17 @@ void MainWindow::read_history()
     {
         QString tmp;
         in>>tmp;
-        tmp += "\n";
+        tmp+="\n";
         text += tmp;
     }
-    if(text.length())
-        text[ text.length()-1 ]=0;
     file.close();
 
     c = QColor(r,g,b);
-    ui->textEdit->setTextColor(c);
+    //ui->textEdit->setTextColor(c);
     fontSize = fondSize;
-    sizeChanged();
+    //sizeChanged();
     ui->fontComboBox->setCurrentIndex(font);
-    fontChanged();
+    //fontChanged();
 
     this->resize(w,h);
     this->move(x,y);
@@ -247,7 +245,9 @@ void MainWindow::read_history()
 
     ui->pushButton_color->setStyleSheet(background);
 
-    ui->textEdit->setText(text);
+    QTextDocument* doc = new QTextDocument;
+    doc->setHtml(text);
+    ui->textEdit->setDocument(doc);
 
     if(text.isEmpty())
         ui->stackedWidget->setCurrentIndex(1);
